@@ -20,11 +20,22 @@ namespace UniWebServer
         {
             stream = new MemoryStream();
             writer = new StreamWriter (stream);
+            headers = new Headers();
         }
 
         public void Write(string text) {
             writer.Write(text);
             writer.Flush();
+        }
+
+        public void SetJSONHeader() {
+            if (!headers.Contains("Content-Type")){
+                headers.Add("Content-Type", "application/json");
+            }
+            else{
+                headers.Set("Content-Type", "application/json");
+            }
+
         }
     }
 

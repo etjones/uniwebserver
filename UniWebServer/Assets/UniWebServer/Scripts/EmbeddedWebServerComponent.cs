@@ -18,7 +18,7 @@ namespace UniWebServer
         public bool processRequestsInMainThread = true;
         public bool logRequests = true;
 
-        WebServer server;
+        protected WebServer server;
         Dictionary<string, IWebResource> resources = new Dictionary<string, IWebResource> ();
 
         void Start ()
@@ -55,9 +55,30 @@ namespace UniWebServer
                     response.Write (e.Message);
                 }
             } else {
-                response.statusCode = 404;
-                response.message = "Not Found.";
-                response.Write (request.uri.LocalPath + " not found.");
+                // Call the appropriate handling method if our URL _starts_
+                // with any of our the resource keys. This enables the Rest API
+                // for any URLs under its prefix. (e.g. /api/endpoint1, /api/endpoint2/arg)
+                // This could cause problems depending on the endpoints defined;
+                // for now, try it out. -- 20190430
+                // FIXME: this might get in the way of serving files, right?
+                bool foundEndpoint = false;
+                foreach(KeyValuePair<string, IWebResource> entry in resources) {
+                    // do something with entry.Value or entry.Key
+                    if (!foundEndpoint && request.uri.LocalPath.StartsWith(entry.Key)){
+                        foundEndpoint = true;
+                        try {
+                            entry.Value.HandleRequest (request, response);
+                        } catch (Exception e) {
+                            response.statusCode = 500;
+                            response.Write (e.Message);
+                        }        
+                    }
+                }                
+                if (!foundEndpoint){
+                    response.statusCode = 404;
+                    response.message = "Not Found.";
+                    response.Write (request.uri.LocalPath + " not found.");
+                }
             }
         }
 
