@@ -37,6 +37,12 @@ namespace UniWebServer
             }
 
         }
+
+        public void Write404(string url) {
+            statusCode = 404;
+            message = "Not Found.";
+            this.Write (url + " not found.");
+        }
     }
 
 }

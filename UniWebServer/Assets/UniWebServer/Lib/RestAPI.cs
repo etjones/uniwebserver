@@ -36,21 +36,18 @@ namespace UniWebServer
             foreach(KeyValuePair<string, HandlerFunc> entry in endpoints) {
                 Match match = Regex.Match(shortUrl, entry.Key);
                 // By testing for endpointFound, we guarantee we'll only run the
-                // *first* matching endpoint; Be careful how these are added.
+                // *first* matching endpoint; Be careful how these are added, since
+                // some might override others.
                 if (!endpointFound && match.Success)
                 {
                     endpointFound = true;
-                    // TODO: also pass in the regex that matched, so handlers
-                    // can pull out arguments like: `/api/endpoint/(?<intArg>\d+)` ?
                     entry.Value(request, response);
                 }
             }
-            // response.headers.Add("Content-Type", "application/json");
-            // string jsonString = @"{""value"":2, ""other"":""a_string""}";
-            // response.Write(jsonString);
 
+            // If none of our endpoints matched, send 404
             if (!endpointFound){
-                // TODO: return a 404 page
+                response.Write404(request.uri.LocalPath);
             }
         }
 
