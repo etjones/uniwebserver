@@ -35,6 +35,8 @@ namespace UniWebServer
             HandlerFunc GETExampleHandler = (request, response) => {   
                 // Basic example: hit a URL, run a handler function, return some
                 // arbitrary JSON.
+
+                // Reachable by POSTing to http://localhost:8079/api/endpoint1
                 response.SetJSONHeader();
                 string jsonString = @"{""value"":2, ""other"":""a_string""}";
                 response.Write(jsonString);           
@@ -43,6 +45,15 @@ namespace UniWebServer
             HandlerFunc POSTExampleHandler = (request, response) => {   
                 // Get a payload from a POST request, parse it as JSON, and 
                 // return a value. Lots of ways to do this, but here's a start.
+
+                // Reachable by POSTing to http://localhost:8079/api/endpoint2
+                // Include the following JSON in the body of the request to 
+                // demonstrate deserialization of JSON into objects:
+                // {    
+                //     "background_color": "0x112233",
+                //     "block_size": 6.2,
+                //     "welcome_message": "Congratulations! It's an API!"
+                // }
 
                 // For the moment, assume JSON format. 
                 // It would be more robust to obey the `Content-Type` header key in request.headers
