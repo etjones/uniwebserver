@@ -10,7 +10,7 @@ namespace UniWebServer
 
     public class RestAPI : MonoBehaviour, IWebResource
     {
-        protected string apiPrefix = "/api";
+        public string apiPrefix = "/api";
 
         protected Dictionary<string, HandlerFunc> endpoints = new Dictionary<string, HandlerFunc> ();
 
