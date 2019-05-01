@@ -12,18 +12,28 @@ namespace UniWebServer
     {
         public int statusCode = 404;
         public string message = "Not Found";
+        public bool useBytes = false;
+        public byte[] dataBytes;
         public Headers headers;
         public MemoryStream stream;
         public StreamWriter writer;
 
-        public Response ()
+
+        public Response()
         {
-            stream = new MemoryStream();
-            writer = new StreamWriter (stream);
             headers = new Headers();
+            stream = new MemoryStream();
+            writer = new StreamWriter(stream);
         }
 
-        public void Write(string text) {
+        public void SetBytes(byte[] data)
+        {
+            useBytes = true;
+            dataBytes = data;
+        }
+
+        public void Write(string text)
+        {
             writer.Write(text);
             writer.Flush();
         }

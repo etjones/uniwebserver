@@ -49,10 +49,10 @@ namespace UniWebServer
                 DummyPayload payload = JsonUtility.FromJson<DummyPayload>(request.body);
                 // Raise an error if the payload isn't as expected:
                 if (payload == null){
-                    throw new System.ArgumentException($"Unable to create instance of DummyPayload from JSON string: {request.body}");
+                    throw new System.ArgumentException("Unable to create instance of DummyPayload from JSON string: \n" + request.body);
                 }
 
-                string status = $"Received payload with background_color: {payload.background_color}";
+                string status = "Received payload with background_color: " + payload.background_color;
                 string jsonString = @"{""result"": """ + status + @"""}";
                 response.SetJSONHeader();
                 response.Write(jsonString);

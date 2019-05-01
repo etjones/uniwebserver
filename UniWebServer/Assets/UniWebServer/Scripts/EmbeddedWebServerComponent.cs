@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Net.Sockets;
 using System.Threading;
@@ -47,44 +47,31 @@ namespace UniWebServer
 
         void HandleRequest (Request request, Response response)
         {
-            if (resources.ContainsKey (request.uri.LocalPath)) {
-                try {
-                    resources [request.uri.LocalPath].HandleRequest (request, response);
-                } catch (Exception e) {
+            // get first part of the directory
+            string folderRoot = Helper.GetFolderRoot(request.uri.LocalPath);
+            if (resources.ContainsKey(folderRoot))
+            {
+                try
+                {
+                    resources[folderRoot].HandleRequest(request, response);
+                }
+                catch (Exception e)
+                {
                     response.statusCode = 500;
-                    response.Write (e.Message);
+                    response.Write(e.Message);
                 }
-            } else {
-                // Call the appropriate handling method if our URL _starts_
-                // with any of our the resource keys. This enables the Rest API
-                // for any URLs under its prefix. (e.g. /api/endpoint1, /api/endpoint2/arg)
-                // This could cause problems depending on the endpoints defined;
-                // for now, try it out. -- 20190430
-                // FIXME: this might get in the way of serving files, right?
-                bool foundEndpoint = false;
-                foreach(KeyValuePair<string, IWebResource> entry in resources) {
-                    // do something with entry.Value or entry.Key
-                    if (!foundEndpoint && request.uri.LocalPath.StartsWith(entry.Key)){
-                        foundEndpoint = true;
-                        try {
-                            entry.Value.HandleRequest (request, response);
-                        } catch (Exception e) {
-                            response.statusCode = 500;
-                            response.Write (e.Message);
-                        }        
-                    }
-                }                
-                if (!foundEndpoint){
-                    response.statusCode = 404;
-                    response.message = "Not Found.";
-                    response.Write (request.uri.LocalPath + " not found.");
-                }
+            }
+            else
+            {
+                response.statusCode = 404;
+                response.message = "Not Found.";
+                response.Write(request.uri.LocalPath + " not found.");
             }
         }
 
-        public void AddResource (string path, IWebResource resource)
+        public void AddResource(string path, IWebResource resource)
         {
-            resources [path] = resource;
+            resources[path] = resource;
         }
 
     }
